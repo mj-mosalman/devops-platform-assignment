@@ -21,21 +21,16 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y docker-compose
 
       - name: Build and Start Stack
-        run: |
-          docker-compose -f deploy/docker-compose.yml \
-          up --build -d
+        run: docker-compose -f deploy/docker-compose.yml up --build -d
 
       - name: Wait for services
         run: |
-          timeout 60s bash -c \
-          'until curl -s localhost:8010/health; do sleep 2; done'
+          timeout 60s bash -c 'until curl -s http://localhost:8010/health; do sleep 2; done'
 
       - name: Run Integration Test
         run: |
           # write test key
-          curl -X POST \
-#          "http://localhost:8010/write/ci-test?value=passed"
-          "http://localhost:8010/write/example_key?value=passed"
+          curl -X POST "http://localhost:8010/write/example_key?value=passed"
 
           sleep 2
           # read from redis
