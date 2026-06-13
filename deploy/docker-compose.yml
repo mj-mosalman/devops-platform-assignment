@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
 
   app:
@@ -10,36 +12,49 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     depends_on:
-      - redis
-    restart: unless-stopped
+      redis:
+        condition: service_healthy
     networks:
       - platform_net
 
   redis:
     image: redis:7-alpine
     container_name: redis_db
-    restart: unless-stopped
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - platform_net
 
- loki:
+  loki:
     image: grafana/loki:2.9.0
+    container_name: loki
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - platform_net
 
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../observability/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - platform_net
+
 networks:
   platform_net:
+    driver: bridge
 
 volumes:
   redis_data:
