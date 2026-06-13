@@ -50,3 +50,12 @@ This supports:
 - container health checks
 - CI validation
 - deployment verification
+
+
+## Decision 6: Integration Testing in CI
+Instead of a simple Docker build, the CI pipeline now orchestrates the full stack using `docker-compose`. 
+- **Justification:** Ensures that application-to-database connectivity is functional before any code is considered "mergable".
+
+## Decision 7: Logging Strategy (Loki)
+Loki was chosen over ELK for log aggregation.
+- **Justification:** Loki is significantly more resource-efficient (index-free approach) and integrates natively with Grafana, which is the industry standard for performance monitoring.
