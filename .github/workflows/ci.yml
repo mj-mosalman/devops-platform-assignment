@@ -35,10 +35,9 @@ jobs:
           # write test key
           curl -X POST \
           "http://localhost:8010/write/ci-test?value=passed"
-
+          sleep 2
           # read from redis
-          RESPONSE=$(curl -s http://localhost:8010/)
-
+          RESPONSE=$(curl -s http://localhost:8010/read/ci-test)
           if [[ "$RESPONSE" == *"passed"* ]]; then
             echo "Integration Test Passed"
           else
