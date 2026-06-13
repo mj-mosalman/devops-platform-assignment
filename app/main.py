@@ -26,3 +26,10 @@ def read_root():
 def write_to_redis(key: str, value: str):
     redis_client.set(key, value)
     return {"message": f"Key '{key}' set to '{value}'"}
+
+@app.get("/read/{key}")
+def read_from_redis(key: str):
+    value = redis_client.get(key)
+    if value is None:
+        raise HTTPException(status_code=404, detail="Key not found")
+    return {"message": value.decode()}
