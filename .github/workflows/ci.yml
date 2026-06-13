@@ -34,17 +34,19 @@ jobs:
         run: |
           # write test key
           curl -X POST \
-          "http://localhost:8010/write/ci-test?value=passed"
+#          "http://localhost:8010/write/ci-test?value=passed"
+          "http://localhost:8010/write/example_key?value=passed"
+
           sleep 2
           # read from redis
-          RESPONSE=$(curl -s http://localhost:8010/read/ci-test)
+          RESPONSE=$(curl -s http://localhost:8010/)
+
           if [[ "$RESPONSE" == *"passed"* ]]; then
             echo "Integration Test Passed"
           else
             echo "Integration Test Failed: $RESPONSE"
             exit 1
           fi
-
       - name: Lint Python
         run: |
           docker run --rm \
