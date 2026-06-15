@@ -59,3 +59,23 @@ Instead of a simple Docker build, the CI pipeline now orchestrates the full stac
 ## Decision 7: Logging Strategy (Loki)
 Loki was chosen over ELK for log aggregation.
 - **Justification:** Loki is significantly more resource-efficient (index-free approach) and integrates natively with Grafana, which is the industry standard for performance monitoring.
+## Decision 8: Redis Persistence
+
+Redis was configured with a persistent Docker volume.
+
+Justification:
+Ensures data durability across container restarts and prevents data loss during failures.
+
+## Decision 9: CI Isolation
+
+A dedicated docker-compose.ci.yml was introduced.
+
+Justification:
+CI environments should run the minimal required services to reduce build time and avoid unnecessary dependencies such as observability components.
+
+## Decision 10: Performance Testing
+
+k6 was used to simulate concurrent users.
+
+Justification:
+k6 is lightweight, container-friendly, and widely used in CI/CD pipelines for HTTP load testing.
